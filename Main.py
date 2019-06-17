@@ -15,6 +15,23 @@ import os
 import fnmatch
 
 
+import cv2
+import numpy as np
+
+# crop image with OpenCV
+if __name__ == '__main__':
+    # Read image
+    im = cv2.imread("image.jpg")  # change filename
+    # Select ROI
+    r = cv2.selectROI(im)
+    # Crop image
+    imCrop = im[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
+
+    # Display cropped image
+    cv2.imshow("Image", imCrop)
+    cv2.waitKey(0)
+
+
 # Takes directory filepath as input, returns list of TIF filenames inside
 def tif_list_gen(filepath):
     exp_loc_prompt = str("Enter the full filepath to experiment directory " +
