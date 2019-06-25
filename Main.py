@@ -21,7 +21,7 @@ import numpy as np
 # crop image with OpenCV
 if __name__ == '__main__':
     # Read image
-    im = cv2.imread("image.jpg")  # change filename
+    im = cv2.imread("image.png")  # change filename
     # Select ROI
     r = cv2.selectROI(im)
     # Crop image
