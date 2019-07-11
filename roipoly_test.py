@@ -1,25 +1,36 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-mpl.rc('figure', figsize=(10, 5))
 mpl.rc('image', cmap='gray')
 
-import numpy as np
-import pandas as pd
-from pandas import DataFrame, Series
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+from pandas import DataFrame, Series  # noqa: E402
 
-import pims
-import trackpy as tp
+import pims  # noqa: E402
+import trackpy as tp  # noqa: E402
+from roipoly import RoiPoly  # noqa: E402
 
-from roipoly import RoiPoly
+frames = pims.ImageSequence("../test/k255e_pos3_mag_tif_invert/*.tif",
+                            as_grey=True)
 
-frames = pims.ImageSequence("../test/k255e_pos3_mag_tif_invert/*.tif", as_grey=True)
+# print(frames[0])  # first frame
 
-print(frames[0]) # first frame
+plt.imshow(frames[0])  # show the image
+immobile_bead = RoiPoly(
+    color='b')  # draw the ROI on shown image, shows fig by default
 
-plt.imshow(frames[0])
-immobile_bead = RoiPoly(color='b')
-plt.imshow(frames[0])
-immobile_bead.display_roi()
-mask = immobile_bead.get_mask(frames[0])
+plt.imshow(frames[0])  # show image first
+immobile_bead.display_roi()  # overlay ROI on shown image
+plt.show()  # show the plot
+
+mask = immobile_bead.get_mask(frames[0])  # call mask attribute from ROI object
+print(mask)
 plt.imshow(mask)
+plt.show()
+
+frame_zero = frames[0]
+
+frame_zero[~mask] = 0
+plt.imshow(frame_zero)
+plt.show()
