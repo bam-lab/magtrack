@@ -11,7 +11,7 @@ import pims  # noqa: E402
 import trackpy as tp  # noqa: E402
 from roipoly import RoiPoly  # noqa: E402
 
-frames = pims.ImageSequence("../test/k255e_pos3_mag_tif_invert/*.tif",
+frames = pims.ImageSequence("../test/wt_pos1/mag1/*.tif",
                             as_grey=True)
 
 # print(frames[0])  # first frame

@@ -105,4 +105,4 @@ venv.bak/
 magtrack_env
 *~
 *.DS_Store
-Results/*
+Results*
