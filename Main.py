@@ -136,15 +136,15 @@ for name, roi in immobile_rois.rois.items():
 
     for i in range(len(immobile_positions_filtered.index)):
         if i > 0:
-            immobile_positions_filtered.loc[
-                i, 'delta_x'] = immobile_positions_filtered.loc[
-                    i, 'x'] - immobile_positions_filtered.loc[i - 1, 'x']
-            immobile_positions_filtered.loc[
-                i, 'delta_y'] = immobile_positions_filtered.loc[
-                    i, 'x'] - immobile_positions_filtered.loc[i - 1, 'y']
+            immobile_positions_filtered.at[
+                i, 'delta_x'] = immobile_positions_filtered.at[
+                    i, 'x'] - immobile_positions_filtered.at[i - 1, 'x']
+            immobile_positions_filtered.at[
+                i, 'delta_y'] = immobile_positions_filtered.at[
+                    i, 'x'] - immobile_positions_filtered.at[i - 1, 'y']
         else:
-            immobile_positions_filtered.loc[i, 'delta_x'] = 0
-            immobile_positions_filtered.loc[i, 'delta_y'] = 0
+            immobile_positions_filtered.at[i, 'delta_x'] = 0
+            immobile_positions_filtered.at[i, 'delta_y'] = 0
     print("immobile_positions_filtered")
     print(immobile_positions_filtered.head())
     immobile_positions_filtered = immobile_positions_filtered.drop(
@@ -276,52 +276,53 @@ for name, roi in cell_rois.rois.items():
     # drift = tp.compute_drift(cell_bead_positions_filtered)
     cell_bead_positions_filtered["delta_x"] = np.nan
     cell_bead_positions_filtered["delta_y"] = np.nan
-    
+
     for i in range(len(cell_bead_positions_filtered.index)):
         if i > 0:
-            cell_bead_positions_filtered.loc[
-                i, 'delta_x'] = cell_bead_positions_filtered.loc[
-                    i, 'x'] - cell_bead_positions_filtered.loc[i - 1, 'x']
-            cell_bead_positions_filtered.loc[
-                i, 'delta_y'] = cell_bead_positions_filtered.loc[
-                    i, 'x'] - cell_bead_positions_filtered.loc[i - 1, 'y']
+            cell_bead_positions_filtered.at[
+                i, 'delta_x'] = cell_bead_positions_filtered.at[
+                    i, 'x'] - cell_bead_positions_filtered.at[i - 1, 'x']
+            cell_bead_positions_filtered.at[
+                i, 'delta_y'] = cell_bead_positions_filtered.at[
+                    i, 'x'] - cell_bead_positions_filtered.at[i - 1, 'y']
         else:
-            cell_bead_positions_filtered.loc[i, 'delta_x'] = 0
-            cell_bead_positions_filtered.loc[i, 'delta_y'] = 0
+            cell_bead_positions_filtered.at[i, 'delta_x'] = 0
+            cell_bead_positions_filtered.at[i, 'delta_y'] = 0
     cell_bead_positions_filtered["cell_name"] = name
 
     for i in range(len(cell_bead_positions_filtered.index)):
-        cell_bead_positions_filtered.loc[
+        cell_bead_positions_filtered.at[
             i, 'delta_x'] = cell_bead_positions_filtered.at[
                 i, 'delta_x'] - immobile_beads_pos.at[i, 'avg_delta_x']
-        cell_bead_positions_filtered.loc[
+        cell_bead_positions_filtered.at[
             i, 'delta_y'] = cell_bead_positions_filtered.at[
                 i, 'delta_y'] - immobile_beads_pos.at[i, 'avg_delta_y']
-    print("cell_bead_positions_filtered")
-    print(cell_bead_positions_filtered.head())
-    cell_bead_positions_filtered = cell_bead_positions_filtered.drop(
-        columns=['x', 'y'])
+    cell_bead_positions_filtered = cell_bead_positions_filtered.drop(columns=[
+        'x', 'y', 'mass', 'size', 'ecc', 'signal', 'raw_mass', 'ep', 'particle'
+    ])
     # timestamp, distance, speed, and fluorescence columns
-    cell_bead_positions_filtered['time'] = np.nan
-    cell_bead_positions_filtered['distance'] = np.nan
-    cell_bead_positions_filtered['instantaneous_speed'] = np.nan
+    cell_bead_positions_filtered['time (s)'] = np.nan
+    cell_bead_positions_filtered['distance (µm)'] = np.nan
+    cell_bead_positions_filtered['instantaneous_speed (µm/s)'] = np.nan
     cell_bead_positions_filtered['fluorescence'] = np.nan
     for i in range(len(cell_bead_positions_filtered.index)):
-        cell_bead_positions_filtered.loc[i, 'time (s)'] = i * seconds_per_frame
-        cell_bead_positions_filtered.loc[i, 'distance (µm)'] = euc_distance(
-            cell_bead_positions_filtered.loc[i, 'delta_x'],
-            cell_bead_positions_filtered.loc[i, 'delta_y']) * microns_per_px
+        cell_bead_positions_filtered.at[i, 'time (s)'] = i * seconds_per_frame
+        cell_bead_positions_filtered.at[i, 'distance (µm)'] = euc_distance(
+            cell_bead_positions_filtered.at[i, 'delta_x'],
+            cell_bead_positions_filtered.at[i, 'delta_y']) * microns_per_px
+        distance = cell_bead_positions_filtered.at[i, 'distance (µm)']
+        time = cell_bead_positions_filtered.at[i, 'time (s)']
         if i > 0:
-            cell_bead_positions_filtered.loc[
-                'instantaneous_speed (µm/s)',
-                i] = cell_bead_positions_filtered.loc[
-                    i, 'distance (µm)'] / cell_bead_positions_filtered.loc[
-                        i, 'time (s)']
+            cell_bead_positions_filtered.at[
+                i, 'instantaneous_speed (µm/s)'] = distance / time
         else:
-            cell_bead_positions_filtered.loc['instantaneous_speed (µm/s)',
-                                             i] = 0.0
-        cell_bead_positions_filtered.loc[i, 'fluorescence'] = fluo_masked_crop[
+            cell_bead_positions_filtered.at[i,
+                                            'instantaneous_speed (µm/s)'] = 0.0
+        cell_bead_positions_filtered.at[i, 'fluorescence'] = fluo_masked_crop[
             i].sum()
+    print("cell_bead_positions_filtered")
+    print(cell_bead_positions_filtered.head())
     cells_bead_pos = pd.concat([cells_bead_pos, cell_bead_positions_filtered])
-
+print(cells_bead_pos.head())
 cells_bead_pos.to_csv(results_path + 'cell_beads.csv')
+print("Finished!")
