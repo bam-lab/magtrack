@@ -332,7 +332,7 @@ for name, roi in cell_rois.rois.items():
             cell_bead_positions_filtered.at[i,
                                             'instantaneous_speed (µm/s)'] = 0.0
         cell_bead_positions_filtered.at[i, 'fluorescence'] = fluo_masked_crop[
-            i].sum()
+            0].sum()
     print("cell_bead_positions_filtered")
     print(cell_bead_positions_filtered.head())
     cell_bead_positions_filtered.to_csv("./Results/cell_csvs/" +
