@@ -39,8 +39,9 @@ data_path = str(sys.argv[1])
 # data_path = '../test/wt_pos1_crop/mag1/*.tif'
 microns_per_px = 1 / 2.6696
 
-position_path = data_path.split('/')[-2]
-results_path = "Results/" + position_path + "/"
+mag_path = data_path.split('/')[-2]
+position_path = data_path.split('/')[-3]
+results_path = "Results/" + position_path + "/" + mag_path + "/"
 os.makedirs(results_path)  # makes all directories in path recursively
 os.makedirs("Results/cell_csvs")
 print(data_path)
