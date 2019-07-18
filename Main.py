@@ -333,5 +333,6 @@ for name, roi in cell_rois.rois.items():
     print("cell_bead_positions_filtered")
     print(cell_bead_positions_filtered.head())
     cell_bead_positions_filtered.to_csv("./Results/cell_csvs/" +
-                                        position_path + '_' + name + '.csv')
+                                        position_path + '_' + mag_path + '_' +
+                                        name + '.csv')
 print("Finished!")
