@@ -129,22 +129,22 @@ for name, roi in immobile_rois.rois.items():
     immobile_positions_filtered = immobile_positions_filtered.drop(columns=[
         'mass', 'size', 'ecc', 'signal', 'raw_mass', 'ep', 'particle'
     ])
-    # new columns for delta x and delta y, distance and 3distance
+    # new columns for delta x and delta y, distance from origin and 3distance
     # TODO: 3distance???
-    immobile_positions_filtered["delta_x"] = np.nan
-    immobile_positions_filtered["delta_y"] = np.nan
+    immobile_positions_filtered["1frame_delta_x"] = np.nan
+    immobile_positions_filtered["1frame_delta_y"] = np.nan
 
     for i in range(len(immobile_positions_filtered.index)):
         if i > 0:
             immobile_positions_filtered.at[
-                i, 'delta_x'] = immobile_positions_filtered.at[
+                i, '1frame_delta_x'] = immobile_positions_filtered.at[
                     i, 'x'] - immobile_positions_filtered.at[i - 1, 'x']
             immobile_positions_filtered.at[
-                i, 'delta_y'] = immobile_positions_filtered.at[
+                i, '1frame_delta_y'] = immobile_positions_filtered.at[
                     i, 'x'] - immobile_positions_filtered.at[i - 1, 'y']
         else:
-            immobile_positions_filtered.at[i, 'delta_x'] = 0
-            immobile_positions_filtered.at[i, 'delta_y'] = 0
+            immobile_positions_filtered.at[i, '1frame_delta_x'] = 0
+            immobile_positions_filtered.at[i, '1frame_delta_y'] = 0
     print("immobile_positions_filtered")
     print(immobile_positions_filtered.head())
     immobile_positions_filtered = immobile_positions_filtered.drop(
@@ -153,13 +153,15 @@ for name, roi in immobile_rois.rois.items():
         [immobile_beads_pos, immobile_positions_filtered],
         axis=1)  # horizontal concatenation of DataFrames
 
-# convert duplicate delta_x and delta_y into averages
+# convert duplicate 1frame_delta_x and 1frame_delta_y into averages
 immobile_beads_pos = immobile_beads_pos.groupby(
     by=immobile_beads_pos.columns, axis=1).apply(lambda g: g.mean(
         axis=1) if isinstance(g.iloc[0, 0], numbers.Number) else g.iloc[:, 0])
 
-immobile_beads_pos.rename(columns={'delta_x': 'avg_delta_x'}, inplace=True)
-immobile_beads_pos.rename(columns={'delta_y': 'avg_delta_y'}, inplace=True)
+immobile_beads_pos.rename(columns={'1frame_delta_x': 'avg_1frame_delta_x'},
+                          inplace=True)
+immobile_beads_pos.rename(columns={'1frame_delta_y': 'avg_1frame_delta_y'},
+                          inplace=True)
 
 print(immobile_beads_pos.head())
 
@@ -274,47 +276,59 @@ for name, roi in cell_rois.rois.items():
     print(cell_bead_positions_filtered)
     tp.plot_traj(cell_bead_positions_filtered)
     # drift = tp.compute_drift(cell_bead_positions_filtered)
-    cell_bead_positions_filtered["delta_x"] = np.nan
-    cell_bead_positions_filtered["delta_y"] = np.nan
+    cell_bead_positions_filtered["1frame_delta_x"] = np.nan
+    cell_bead_positions_filtered["1frame_delta_y"] = np.nan
 
     for i in range(len(cell_bead_positions_filtered.index)):
         if i > 0:
             cell_bead_positions_filtered.at[
-                i, 'delta_x'] = cell_bead_positions_filtered.at[
+                i, '1frame_delta_x'] = cell_bead_positions_filtered.at[
                     i, 'x'] - cell_bead_positions_filtered.at[i - 1, 'x']
             cell_bead_positions_filtered.at[
-                i, 'delta_y'] = cell_bead_positions_filtered.at[
-                    i, 'x'] - cell_bead_positions_filtered.at[i - 1, 'y']
+                i, '1frame_delta_y'] = cell_bead_positions_filtered.at[
+                    i, 'y'] - cell_bead_positions_filtered.at[i - 1, 'y']
         else:
-            cell_bead_positions_filtered.at[i, 'delta_x'] = 0
-            cell_bead_positions_filtered.at[i, 'delta_y'] = 0
+            cell_bead_positions_filtered.at[i, '1frame_delta_x'] = 0.0
+            cell_bead_positions_filtered.at[i, '1frame_delta_y'] = 0.0
     cell_bead_positions_filtered["cell_name"] = name
 
     for i in range(len(cell_bead_positions_filtered.index)):
         cell_bead_positions_filtered.at[
-            i, 'delta_x'] = cell_bead_positions_filtered.at[
-                i, 'delta_x'] - immobile_beads_pos.at[i, 'avg_delta_x']
+            i, '1frame_delta_x'] = cell_bead_positions_filtered.at[
+                i, '1frame_delta_x'] - immobile_beads_pos.at[
+                    i, 'avg_1frame_delta_x']
         cell_bead_positions_filtered.at[
-            i, 'delta_y'] = cell_bead_positions_filtered.at[
-                i, 'delta_y'] - immobile_beads_pos.at[i, 'avg_delta_y']
+            i, '1frame_delta_y'] = cell_bead_positions_filtered.at[
+                i, '1frame_delta_y'] - immobile_beads_pos.at[
+                    i, 'avg_1frame_delta_y']
     cell_bead_positions_filtered = cell_bead_positions_filtered.drop(columns=[
-        'x', 'y', 'mass', 'size', 'ecc', 'signal', 'raw_mass', 'ep', 'particle'
+        'mass', 'size', 'ecc', 'signal', 'raw_mass', 'ep', 'particle'
     ])
     # timestamp, distance, speed, and fluorescence columns
     cell_bead_positions_filtered['time (s)'] = np.nan
-    cell_bead_positions_filtered['distance (µm)'] = np.nan
+    cell_bead_positions_filtered['distance from origin (µm)'] = np.nan
     cell_bead_positions_filtered['instantaneous_speed (µm/s)'] = np.nan
     cell_bead_positions_filtered['fluorescence'] = np.nan
     for i in range(len(cell_bead_positions_filtered.index)):
-        cell_bead_positions_filtered.at[i, 'time (s)'] = i * seconds_per_frame
-        cell_bead_positions_filtered.at[i, 'distance (µm)'] = euc_distance(
-            cell_bead_positions_filtered.at[i, 'delta_x'],
-            cell_bead_positions_filtered.at[i, 'delta_y']) * microns_per_px
-        distance = cell_bead_positions_filtered.at[i, 'distance (µm)']
+        cell_bead_positions_filtered.at[i, 'time (s)'] = float(
+            i * seconds_per_frame)
+        cell_bead_positions_filtered.at[
+            i, 'distance from origin (µm)'] = euc_distance(
+                cell_bead_positions_filtered.at[i, 'x'] -
+                cell_bead_positions_filtered.at[0, 'x'],
+                cell_bead_positions_filtered.at[i, 'y'] -
+                cell_bead_positions_filtered.at[0, 'y']) * microns_per_px
+        distance = cell_bead_positions_filtered.at[i,
+                                                   'distance from origin (µm)']
+
         time = cell_bead_positions_filtered.at[i, 'time (s)']
         if i > 0:
+            delta_x = cell_bead_positions_filtered.at[i, '1frame_delta_x']
+            delta_y = cell_bead_positions_filtered.at[i, '1frame_delta_y']
+            distance_from_prev_frame = euc_distance(delta_x, delta_y)
             cell_bead_positions_filtered.at[
-                i, 'instantaneous_speed (µm/s)'] = distance / time
+                i,
+                'instantaneous_speed (µm/s)'] = distance_from_prev_frame / time
         else:
             cell_bead_positions_filtered.at[i,
                                             'instantaneous_speed (µm/s)'] = 0.0
@@ -322,7 +336,5 @@ for name, roi in cell_rois.rois.items():
             i].sum()
     print("cell_bead_positions_filtered")
     print(cell_bead_positions_filtered.head())
-    cells_bead_pos = pd.concat([cells_bead_pos, cell_bead_positions_filtered])
-print(cells_bead_pos.head())
-cells_bead_pos.to_csv(results_path + 'cell_beads.csv')
+    cell_bead_positions_filtered.to_csv("./Results/" + name + '.csv')
 print("Finished!")
