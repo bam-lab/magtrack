@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
+import sys
 import os
 
 import matplotlib as mpl
@@ -33,21 +33,16 @@ def euc_distance(dx, dy):
     return D
 
 
-# parser = argparse.ArgumentParser(description='Filepath to data directory. ' +
-#                                  'Filepath in single quotes with wildcard ' +
-#                                  'and filetype suffix: path/to/dir/*.tif')
-# parser.add_argument('filepath', type=str, action='store')
-# args = parser.parse_args()
+# Get data path from CLI argument in quotes
+data_path = str(sys.argv[1])
 
-# data_path = args.filepath
-
-data_path = '../test/wt_pos1_crop/mag1/*.tif'
+# data_path = '../test/wt_pos1_crop/mag1/*.tif'
 microns_per_px = 1 / 2.6696
 
 position_path = data_path.split('/')[-2]
 results_path = "Results/" + position_path + "/"
 os.makedirs(results_path)  # makes all directories in path recursively
-
+os.makedirs("Results/cell_csvs")
 print(data_path)
 print(position_path)
 
@@ -336,5 +331,6 @@ for name, roi in cell_rois.rois.items():
             i].sum()
     print("cell_bead_positions_filtered")
     print(cell_bead_positions_filtered.head())
-    cell_bead_positions_filtered.to_csv("./Results/" + name + '.csv')
+    cell_bead_positions_filtered.to_csv("./Results/cell_csvs/" +
+                                        position_path + '_' + name + '.csv')
 print("Finished!")

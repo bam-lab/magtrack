@@ -20,7 +20,7 @@ def euc_distance(dx, dy):
     return D
 
 
-cell_csv_list = glob.glob('./Results/cell*.csv')
+cell_csv_list = glob.glob('./Results/cell_csvs/cell*.csv')
 microns_per_px = 1 / 2.6696
 max_sample_range = 10
 
@@ -53,6 +53,6 @@ for cell_csv_filename in cell_csv_list:
                               str(i) +
                               'frame_instantaneous_speed (µm/s)'] = 0.0
     cells_bead_data = pd.concat([cells_bead_data, image_data])
-cells_bead_data = cells_bead_data.drop(columns=['Unnamed: 0'])
+# cells_bead_data = cells_bead_data.drop(columns=['Unnamed: 0'])
 cells_bead_data.to_csv("./Results/all_cells.csv")
 print('Finished!')
