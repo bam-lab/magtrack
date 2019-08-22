@@ -39,16 +39,16 @@ data_path = str(sys.argv[1])
 # data_path = '../test/wt_pos1_crop/mag1/*.tif'
 microns_per_px = 1 / 2.6696
 
-mag_path = data_path.split('/')[-2]
-position_path = data_path.split('/')[-3]
-results_path = "Results/" + position_path + "/" + mag_path + "/"
+position = data_path.split('/')[-2]
+cell_type = data_path.split('/')[-3]
+results_path = "Results/" + cell_type + "/" + position + "/"
 os.makedirs(results_path)  # makes all directories in path recursively
 try:
     os.makedirs("Results/cell_csvs")
 except Exception:
     print("Results/cell_csvs exists")
 print(data_path)
-print(position_path)
+print(cell_type)
 
 frames = pims.ImageSequence(data_path, as_grey=True)
 seconds_per_frame = 60 / len(frames)
@@ -190,7 +190,6 @@ cells_bead_pos = pd.DataFrame()
 # Mask cells
 for name, roi in cell_rois.rois.items():
     name = "cell" + name
-    cell_type = mag_path
     cell_frames_masked = []
     mask = roi.get_mask(frames[-1])  # get mask from current roi
     # apply mask to each frame and append to list of masked frames
@@ -341,6 +340,6 @@ for name, roi in cell_rois.rois.items():
     print("cell_bead_positions_filtered")
     print(cell_bead_positions_filtered.head())
     cell_bead_positions_filtered.to_csv("./Results/cell_csvs/" +
-                                        position_path + '_' + mag_path + '_' +
+                                        cell_type + '_' + position + '_' +
                                         name + '.csv')
 print("Finished!")
