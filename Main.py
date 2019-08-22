@@ -20,7 +20,7 @@ mpl.rc('image', cmap='gray')
 import numpy as np  # noqa: E402
 from skimage import morphology  # noqa: E402
 import pandas as pd  # noqa: E402
-import numbers  # noqa: E402
+# import numbers  # noqa: E402
 
 import pims  # noqa: E402
 import trackpy as tp  # noqa: E402
