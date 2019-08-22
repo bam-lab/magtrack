@@ -55,114 +55,114 @@ seconds_per_frame = 60 / len(frames)
 print(frames[-1])
 
 # pick immobile beads outside the cell
-plt.imshow(frames[-1])
-plt.title("Select ROIs for immobile beads")
-immobile_rois = MultiRoi()
+# plt.imshow(frames[-1])
+# plt.title("Select ROIs for immobile beads")
+# immobile_rois = MultiRoi()
 
-plt.imshow(frames[-1])
-roi_names = []
-for name, roi in immobile_rois.rois.items():
-    roi.display_roi()
-    roi_names.append("bead" + name)
-plt.legend(roi_names, bbox_to_anchor=(1.2, 1.05))
-plt.savefig(results_path + 'bead_ROIs.svg')
-plt.show()
+# plt.imshow(frames[-1])
+# roi_names = []
+# for name, roi in immobile_rois.rois.items():
+#     roi.display_roi()
+#     roi_names.append("bead" + name)
+# plt.legend(roi_names, bbox_to_anchor=(1.2, 1.05))
+# plt.savefig(results_path + 'bead_ROIs.svg')
+# plt.show()
 
 all_beads_masked = np.empty(frames[-1].shape)
 print("shape:", all_beads_masked.shape)
 
-immobile_beads_pos = pd.DataFrame()
+# immobile_beads_pos = pd.DataFrame()
 
-for name, roi in immobile_rois.rois.items():
-    name = "immobile_bead" + name
-    bead_frames_masked = []
-    mask = roi.get_mask(frames[-1])  # mask from current bead ROI
-    # apply mask to each frame
-    print(name)
-    for frame in frames:
-        frame[~mask] = frame.max()
-        bead_frames_masked.append(frame)
-    # crop bead ROI into smaller image
-    chull = morphology.convex_hull_image(mask)
-    [rows, columns] = np.where(chull)
-    row1 = min(rows)
-    row2 = max(rows)
-    col1 = min(columns)
-    col2 = max(columns)
-    immobile_bead_crop = []
-    for frame in bead_frames_masked:
-        frame = frame[row1:row2, col1:col2]
-        immobile_bead_crop.append(frame)
-    immobile_bead_first = tp.locate(
-        immobile_bead_crop[-1],
-        17,
-        minmass=5000,
-        max_iterations=20,
-        percentile=99.995,
-        # topn=1,
-        invert=True)
-    print(immobile_bead_first.head())
-    plt.figure()
-    tp.annotate(immobile_bead_first, immobile_bead_crop[-1])
-    plt.savefig(results_path + 'beads_found.svg')
-    immobile_bead = tp.batch(
-        immobile_bead_crop,
-        17,
-        minmass=5000,
-        max_iterations=20,
-        percentile=99.995,
-        # topn=1,
-        invert=True)
-    immobile_positions = tp.link(immobile_bead, 5, memory=5)
-    print(immobile_positions.head())
-    immobile_positions_filtered = tp.filter_stubs(immobile_positions,
-                                                  len(immobile_bead_crop))
-    # Compare number of particles in unfiltered and filtered data.
-    print('Before:', immobile_positions['particle'].nunique())
-    print('After:', immobile_positions_filtered['particle'].nunique())
-    immobile_positions_filtered.index.names = ['']
-    print(immobile_positions_filtered)
-    tp.plot_traj(immobile_positions_filtered)
-    drift = tp.compute_drift(immobile_positions_filtered)
-    # keep only x, y, frame columns
-    immobile_positions_filtered = immobile_positions_filtered.drop(columns=[
-        'mass', 'size', 'ecc', 'signal', 'raw_mass', 'ep', 'particle'
-    ])
-    # new columns for delta x and delta y, distance from origin and 3distance
-    # TODO: 3distance???
-    immobile_positions_filtered["1frame_delta_x"] = np.nan
-    immobile_positions_filtered["1frame_delta_y"] = np.nan
+# for name, roi in immobile_rois.rois.items():
+#     name = "immobile_bead" + name
+#     bead_frames_masked = []
+#     mask = roi.get_mask(frames[-1])  # mask from current bead ROI
+#     # apply mask to each frame
+#     print(name)
+#     for frame in frames:
+#         frame[~mask] = frame.max()
+#         bead_frames_masked.append(frame)
+#     # crop bead ROI into smaller image
+#     chull = morphology.convex_hull_image(mask)
+#     [rows, columns] = np.where(chull)
+#     row1 = min(rows)
+#     row2 = max(rows)
+#     col1 = min(columns)
+#     col2 = max(columns)
+#     immobile_bead_crop = []
+#     for frame in bead_frames_masked:
+#         frame = frame[row1:row2, col1:col2]
+#         immobile_bead_crop.append(frame)
+#     immobile_bead_first = tp.locate(
+#         immobile_bead_crop[-1],
+#         17,
+#         minmass=5000,
+#         max_iterations=20,
+#         percentile=99.995,
+#         # topn=1,
+#         invert=True)
+#     print(immobile_bead_first.head())
+#     plt.figure()
+#     tp.annotate(immobile_bead_first, immobile_bead_crop[-1])
+#     plt.savefig(results_path + 'beads_found.svg')
+#     immobile_bead = tp.batch(
+#         immobile_bead_crop,
+#         17,
+#         minmass=5000,
+#         max_iterations=20,
+#         percentile=99.995,
+#         # topn=1,
+#         invert=True)
+#     immobile_positions = tp.link(immobile_bead, 5, memory=5)
+#     print(immobile_positions.head())
+#     immobile_positions_filtered = tp.filter_stubs(immobile_positions,
+#                                                   len(immobile_bead_crop))
+#     # Compare number of particles in unfiltered and filtered data.
+#     print('Before:', immobile_positions['particle'].nunique())
+#     print('After:', immobile_positions_filtered['particle'].nunique())
+#     immobile_positions_filtered.index.names = ['']
+#     print(immobile_positions_filtered)
+#     tp.plot_traj(immobile_positions_filtered)
+#     drift = tp.compute_drift(immobile_positions_filtered)
+#     # keep only x, y, frame columns
+#     immobile_positions_filtered = immobile_positions_filtered.drop(columns=[
+#         'mass', 'size', 'ecc', 'signal', 'raw_mass', 'ep', 'particle'
+#     ])
+#     # new columns for delta x and delta y, distance from origin and 3distance
+#     # TODO: 3distance???
+#     immobile_positions_filtered["1frame_delta_x"] = np.nan
+#     immobile_positions_filtered["1frame_delta_y"] = np.nan
 
-    for i in range(len(immobile_positions_filtered.index)):
-        if i > 0:
-            immobile_positions_filtered.at[
-                i, '1frame_delta_x'] = immobile_positions_filtered.at[
-                    i, 'x'] - immobile_positions_filtered.at[i - 1, 'x']
-            immobile_positions_filtered.at[
-                i, '1frame_delta_y'] = immobile_positions_filtered.at[
-                    i, 'x'] - immobile_positions_filtered.at[i - 1, 'y']
-        else:
-            immobile_positions_filtered.at[i, '1frame_delta_x'] = 0
-            immobile_positions_filtered.at[i, '1frame_delta_y'] = 0
-    print("immobile_positions_filtered")
-    print(immobile_positions_filtered.head())
-    immobile_positions_filtered = immobile_positions_filtered.drop(
-        columns=['x', 'y'])
-    immobile_beads_pos = pd.concat(
-        [immobile_beads_pos, immobile_positions_filtered],
-        axis=1)  # horizontal concatenation of DataFrames
+#     for i in range(len(immobile_positions_filtered.index)):
+#         if i > 0:
+#             immobile_positions_filtered.at[
+#                 i, '1frame_delta_x'] = immobile_positions_filtered.at[
+#                     i, 'x'] - immobile_positions_filtered.at[i - 1, 'x']
+#             immobile_positions_filtered.at[
+#                 i, '1frame_delta_y'] = immobile_positions_filtered.at[
+#                     i, 'x'] - immobile_positions_filtered.at[i - 1, 'y']
+#         else:
+#             immobile_positions_filtered.at[i, '1frame_delta_x'] = 0
+#             immobile_positions_filtered.at[i, '1frame_delta_y'] = 0
+#     print("immobile_positions_filtered")
+#     print(immobile_positions_filtered.head())
+#     immobile_positions_filtered = immobile_positions_filtered.drop(
+#         columns=['x', 'y'])
+#     immobile_beads_pos = pd.concat(
+#         [immobile_beads_pos, immobile_positions_filtered],
+#         axis=1)  # horizontal concatenation of DataFrames
 
-# convert duplicate 1frame_delta_x and 1frame_delta_y into averages
-immobile_beads_pos = immobile_beads_pos.groupby(
-    by=immobile_beads_pos.columns, axis=1).apply(lambda g: g.mean(
-        axis=1) if isinstance(g.iloc[0, 0], numbers.Number) else g.iloc[:, 0])
+# # convert duplicate 1frame_delta_x and 1frame_delta_y into averages
+# immobile_beads_pos = immobile_beads_pos.groupby(
+#     by=immobile_beads_pos.columns, axis=1).apply(lambda g: g.mean(
+#         axis=1) if isinstance(g.iloc[0, 0], numbers.Number) else g.iloc[:, 0])
 
-immobile_beads_pos.rename(columns={'1frame_delta_x': 'avg_1frame_delta_x'},
-                          inplace=True)
-immobile_beads_pos.rename(columns={'1frame_delta_y': 'avg_1frame_delta_y'},
-                          inplace=True)
-immobile_beads_pos.to_csv(results_path + "immobile_beads.csv")
-print(immobile_beads_pos.head())
+# immobile_beads_pos.rename(columns={'1frame_delta_x': 'avg_1frame_delta_x'},
+#                           inplace=True)
+# immobile_beads_pos.rename(columns={'1frame_delta_y': 'avg_1frame_delta_y'},
+#                           inplace=True)
+# immobile_beads_pos.to_csv(results_path + "immobile_beads.csv")
+# print(immobile_beads_pos.head())
 
 # print(all_beads_masked.shape)
 # print(all_beads_masked)
@@ -190,6 +190,7 @@ cells_bead_pos = pd.DataFrame()
 # Mask cells
 for name, roi in cell_rois.rois.items():
     name = "cell" + name
+    cell_type = mag_path
     cell_frames_masked = []
     mask = roi.get_mask(frames[-1])  # get mask from current roi
     # apply mask to each frame and append to list of masked frames
@@ -201,11 +202,11 @@ for name, roi in cell_rois.rois.items():
     print(data_dir)
 
     # mask fluorescent channel too
-    fluo_img = pims.ImageSequence(data_dir + '/*.tif')
-    fluo_masked = []
-    for fluo_frame in fluo_img:
-        fluo_frame[~mask] = 0
-        fluo_masked.append(fluo_frame)
+    # fluo_img = pims.ImageSequence(data_dir + '/*.tif')
+    # fluo_masked = []
+    # for fluo_frame in fluo_img:
+    #     fluo_frame[~mask] = 0
+    #     fluo_masked.append(fluo_frame)
 
     # crop images
     chull = morphology.convex_hull_image(mask)
@@ -223,9 +224,9 @@ for name, roi in cell_rois.rois.items():
     # plt.show()
     # fluorescent crop
     fluo_masked_crop = []
-    for fluo_mask_frame in fluo_masked:
-        fluo_mask_frame = fluo_mask_frame[row1:row2, col1:col2]
-        fluo_masked_crop.append(fluo_mask_frame)
+    # for fluo_mask_frame in fluo_masked:
+    #     fluo_mask_frame = fluo_mask_frame[row1:row2, col1:col2]
+    #     fluo_masked_crop.append(fluo_mask_frame)
 
     # pick 1 bead inside cell
     plt.imshow(cell_frames_masked_crop[-1])  # show image
@@ -248,8 +249,8 @@ for name, roi in cell_rois.rois.items():
         cell_masked_frame = cell_masked_frame[row1:row2, col1:col2]
         cell_bead_crop.append(cell_masked_frame)
     cell_bead_first = tp.locate(cell_bead_crop[-1],
-                                17,
-                                minmass=3000,
+                                19,
+                                minmass=190000,
                                 max_iterations=20,
                                 percentile=20,
                                 invert=True)
@@ -292,6 +293,7 @@ for name, roi in cell_rois.rois.items():
             cell_bead_positions_filtered.at[i, '1frame_delta_x'] = 0.0
             cell_bead_positions_filtered.at[i, '1frame_delta_y'] = 0.0
     cell_bead_positions_filtered["cell_name"] = name
+    cell_bead_positions_filtered["cell_type"] = cell_type
 
     # De-drift using immobile beads
     # for i in range(len(cell_bead_positions_filtered.index)):
@@ -310,7 +312,7 @@ for name, roi in cell_rois.rois.items():
     cell_bead_positions_filtered['time (s)'] = np.nan
     cell_bead_positions_filtered['distance from origin (µm)'] = np.nan
     cell_bead_positions_filtered['instantaneous_speed (µm/s)'] = np.nan
-    cell_bead_positions_filtered['fluorescence'] = np.nan
+    # cell_bead_positions_filtered['fluorescence'] = np.nan
     for i in range(len(cell_bead_positions_filtered.index)):
         cell_bead_positions_filtered.at[i, 'time (s)'] = float(
             i * seconds_per_frame)
@@ -334,8 +336,8 @@ for name, roi in cell_rois.rois.items():
         else:
             cell_bead_positions_filtered.at[i,
                                             'instantaneous_speed (µm/s)'] = 0.0
-        cell_bead_positions_filtered.at[i, 'fluorescence'] = fluo_masked_crop[
-            0].sum()
+        # cell_bead_positions_filtered.at[i, 'fluorescence'] = fluo_masked_crop[
+        #     0].sum()
     print("cell_bead_positions_filtered")
     print(cell_bead_positions_filtered.head())
     cell_bead_positions_filtered.to_csv("./Results/cell_csvs/" +
