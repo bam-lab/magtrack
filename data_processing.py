@@ -20,7 +20,7 @@ def euc_distance(dx, dy):
     return D
 
 
-cell_csv_list = glob.glob('./Results/cell_csvs/cell*.csv')
+cell_csv_list = glob.glob('./Results/cell_csvs/*.csv')
 microns_per_px = 1 / 2.6696
 max_sample_range = 10
 
@@ -46,7 +46,7 @@ for cell_csv_filename in cell_csv_list:
                         image_data.at[j, str(i) + 'frame_delta_y']) / (
                             image_data.at[j, 'time (s)'] -
                             image_data.at[j - i, 'time (s)'])
-            else:
+            elif j == 0:
                 image_data.at[j, str(i) + 'frame_delta_x'] = 0.0
                 image_data.at[j, str(i) + 'frame_delta_y'] = 0.0
                 image_data.at[j,

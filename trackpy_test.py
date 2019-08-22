@@ -11,7 +11,7 @@ import trackpy as tp
 import sys
 
 # PIMS demo
-frames = pims.ImageSequence("../test/k255e_pos3_mag_tif_invert/*.tif",
+frames = pims.ImageSequence("../test/k255e_pos3_mag_tif/*.tif",
                             as_grey=True)
 frame_zero = frames[0]
 print(frames[0])

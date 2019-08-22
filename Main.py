@@ -161,7 +161,7 @@ immobile_beads_pos.rename(columns={'1frame_delta_x': 'avg_1frame_delta_x'},
                           inplace=True)
 immobile_beads_pos.rename(columns={'1frame_delta_y': 'avg_1frame_delta_y'},
                           inplace=True)
-
+immobile_beads_pos.to_csv(results_path + "immobile_beads.csv")
 print(immobile_beads_pos.head())
 
 # print(all_beads_masked.shape)
@@ -282,24 +282,27 @@ for name, roi in cell_rois.rois.items():
         if i > 0:
             cell_bead_positions_filtered.at[
                 i, '1frame_delta_x'] = cell_bead_positions_filtered.at[
-                    i, 'x'] - cell_bead_positions_filtered.at[i - 1, 'x']
+                    i, 'x'] - cell_bead_positions_filtered.at[
+                        i - 1, 'x'] * microns_per_px
             cell_bead_positions_filtered.at[
                 i, '1frame_delta_y'] = cell_bead_positions_filtered.at[
-                    i, 'y'] - cell_bead_positions_filtered.at[i - 1, 'y']
+                    i, 'y'] - cell_bead_positions_filtered.at[
+                        i - 1, 'y'] * microns_per_px
         else:
             cell_bead_positions_filtered.at[i, '1frame_delta_x'] = 0.0
             cell_bead_positions_filtered.at[i, '1frame_delta_y'] = 0.0
     cell_bead_positions_filtered["cell_name"] = name
 
-    for i in range(len(cell_bead_positions_filtered.index)):
-        cell_bead_positions_filtered.at[
-            i, '1frame_delta_x'] = cell_bead_positions_filtered.at[
-                i, '1frame_delta_x'] - immobile_beads_pos.at[
-                    i, 'avg_1frame_delta_x']
-        cell_bead_positions_filtered.at[
-            i, '1frame_delta_y'] = cell_bead_positions_filtered.at[
-                i, '1frame_delta_y'] - immobile_beads_pos.at[
-                    i, 'avg_1frame_delta_y']
+    # De-drift using immobile beads
+    # for i in range(len(cell_bead_positions_filtered.index)):
+    #     cell_bead_positions_filtered.at[
+    #         i, '1frame_delta_x'] = cell_bead_positions_filtered.at[
+    #             i, '1frame_delta_x'] - immobile_beads_pos.at[
+    #                 i, 'avg_1frame_delta_x']
+    #     cell_bead_positions_filtered.at[
+    #         i, '1frame_delta_y'] = cell_bead_positions_filtered.at[
+    #             i, '1frame_delta_y'] - immobile_beads_pos.at[
+    #                 i, 'avg_1frame_delta_y']
     cell_bead_positions_filtered = cell_bead_positions_filtered.drop(columns=[
         'mass', 'size', 'ecc', 'signal', 'raw_mass', 'ep', 'particle'
     ])
