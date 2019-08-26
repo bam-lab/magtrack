@@ -39,9 +39,11 @@ data_path = str(sys.argv[1])
 # data_path = '../test/wt_pos1_crop/mag1/*.tif'
 microns_per_px = 1 / 2.6696
 
+series = data_path.split('/')[-1]
 position = data_path.split('/')[-2]
 cell_type = data_path.split('/')[-3]
-results_path = "Results/" + cell_type + "/" + position + "/"
+
+results_path = "Results/" + cell_type + "/" + position + "/" + series + "/"
 os.makedirs(results_path)  # makes all directories in path recursively
 try:
     os.makedirs("Results/cell_csvs")
@@ -341,5 +343,5 @@ for name, roi in cell_rois.rois.items():
     print(cell_bead_positions_filtered.head())
     cell_bead_positions_filtered.to_csv("./Results/cell_csvs/" +
                                         cell_type + '_' + position + '_' +
-                                        name + '.csv')
+                                        series + '.csv')
 print("Finished!")
