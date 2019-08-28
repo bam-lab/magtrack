@@ -250,20 +250,20 @@ for name, roi in cell_rois.rois.items():
         cell_masked_frame = cell_masked_frame[row1:row2, col1:col2]
         cell_bead_crop.append(cell_masked_frame)
     cell_bead_first = tp.locate(cell_bead_crop[-1],
-                                19,
-                                minmass=190000,
+                                21,
+                                minmass=1900,
                                 max_iterations=20,
-                                percentile=20,
+                                percentile=80,
                                 invert=True)
     print(cell_bead_first.head())
     plt.figure()
     tp.annotate(cell_bead_first, cell_bead_crop[-1])
     plt.savefig(results_path + 'cell_bead_found.svg')
     cell_bead = tp.batch(cell_bead_crop,
-                         17,
-                         minmass=3000,
+                         21,
+                         minmass=1900,
                          max_iterations=20,
-                         percentile=20,
+                         percentile=80,
                          invert=True)
     cell_bead_positions = tp.link(cell_bead, 5, memory=5)
     print("cell_bead_positions")
