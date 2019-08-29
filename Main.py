@@ -44,7 +44,10 @@ position = data_path.split('/')[-2]
 cell_type = data_path.split('/')[-3]
 
 results_path = "Results/" + cell_type + "/" + position + "/" + series + "/"
-os.makedirs(results_path)  # makes all directories in path recursively
+try:
+    os.makedirs(results_path)  # makes all directories in path recursively
+except Exception:
+    pass
 try:
     os.makedirs("Results/cell_csvs")
 except Exception:
@@ -250,22 +253,24 @@ for name, roi in cell_rois.rois.items():
         cell_masked_frame = cell_masked_frame[row1:row2, col1:col2]
         cell_bead_crop.append(cell_masked_frame)
     cell_bead_first = tp.locate(cell_bead_crop[-1],
-                                21,
-                                minmass=1900,
+                                17,
+                                minmass=49000,
                                 max_iterations=20,
-                                percentile=80,
+                                # topn=1,
+                                # percentile=99,
                                 invert=True)
     print(cell_bead_first.head())
     plt.figure()
     tp.annotate(cell_bead_first, cell_bead_crop[-1])
     plt.savefig(results_path + 'cell_bead_found.svg')
     cell_bead = tp.batch(cell_bead_crop,
-                         21,
-                         minmass=1900,
+                         17,
+                         minmass=49000,
                          max_iterations=20,
-                         percentile=80,
+                         # topn=1,
+                         # percentile=99,
                          invert=True)
-    cell_bead_positions = tp.link(cell_bead, 5, memory=5)
+    cell_bead_positions = tp.link_df(cell_bead, 10, memory=5)
     print("cell_bead_positions")
     print(cell_bead_positions.head())
     cell_bead_positions_filtered = tp.filter_stubs(cell_bead_positions,
@@ -293,7 +298,7 @@ for name, roi in cell_rois.rois.items():
         else:
             cell_bead_positions_filtered.at[i, '1frame_delta_x'] = 0.0
             cell_bead_positions_filtered.at[i, '1frame_delta_y'] = 0.0
-    cell_bead_positions_filtered["cell_name"] = name
+    cell_bead_positions_filtered["cell_name"] = position
     cell_bead_positions_filtered["cell_type"] = cell_type
 
     # De-drift using immobile beads
