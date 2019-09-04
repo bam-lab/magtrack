@@ -37,7 +37,7 @@ def euc_distance(dx, dy):
 data_path = str(sys.argv[1])
 
 # data_path = '../test/wt_pos1_crop/mag1/*.tif'
-microns_per_px = 1 / 2.6696
+microns_per_px = 1 / 5.4533  # for 40x, 2.6696 for 20x
 
 series = data_path.split('/')[-1]
 position = data_path.split('/')[-2]
