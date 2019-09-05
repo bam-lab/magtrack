@@ -30,49 +30,55 @@ sns.relplot(x="time (s)",
             data=bead_data)
 
 sns.relplot(x="distance from origin (µm)",
-            y="10frame_slope (Hz)",
+            y="10frame_instantaneous_speed (µm/s)",
             hue="position",
             style="cell_type",
             data=bead_data)
 
-# 193
-
-sns.relplot(x="distance from origin (µm)",
-            y="10frame_instantaneous_speed (µm/s)",
-            hue="position",
-            # style="cell_type",
-            data=bead_data_193)
-
-sns.relplot(x="time (s)",
-            y="10frame_instantaneous_speed (µm/s)",
-            hue="position",
-            # style="cell_type",
-            data=bead_data_193)
-
-sns.relplot(x="distance from origin (µm)",
-            y="10frame_slope (Hz)",
-            hue="position",
-            # style="cell_type",
-            data=bead_data_193)
-
-# c1
-
-sns.relplot(x="distance from origin (µm)",
-            y="10frame_instantaneous_speed (µm/s)",
-            hue="position",
-            # style="cell_type",
-            data=bead_data_c1)
-
 sns.relplot(x="time (s)",
             y="10frame_instantaneous_speed (µm/s)",
             hue="position",
             style="cell_type",
-            data=bead_data_c1)
+            data=bead_data)
 
-sns.relplot(x="distance from origin (µm)",
-            y="10frame_slope (Hz)",
-            hue="position",
-            # style="cell_type",
-            data=bead_data_c1)
+# # 193
+
+# sns.relplot(x="distance from origin (µm)",
+#             y="10frame_instantaneous_speed (µm/s)",
+#             hue="position",
+#             # style="cell_type",
+#             data=bead_data_193)
+
+# sns.relplot(x="time (s)",
+#             y="10frame_instantaneous_speed (µm/s)",
+#             hue="position",
+#             # style="cell_type",
+#             data=bead_data_193)
+
+# sns.relplot(x="distance from origin (µm)",
+#             y="10frame_slope (Hz)",
+#             hue="position",
+#             # style="cell_type",
+#             data=bead_data_193)
+
+# # c1
+
+# sns.relplot(x="distance from origin (µm)",
+#             y="10frame_instantaneous_speed (µm/s)",
+#             hue="position",
+#             # style="cell_type",
+#             data=bead_data_c1)
+
+# sns.relplot(x="time (s)",
+#             y="10frame_instantaneous_speed (µm/s)",
+#             hue="position",
+#             style="cell_type",
+#             data=bead_data_c1)
+
+# sns.relplot(x="distance from origin (µm)",
+#             y="10frame_slope (Hz)",
+#             hue="position",
+#             # style="cell_type",
+#             data=bead_data_c1)
 
 plt.show()
