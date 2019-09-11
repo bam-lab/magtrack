@@ -6,7 +6,7 @@
 4. Install dependencies with `(venv) pip install -r req.txt`.
 
 # Run Instructions
-1. In the virtual environment, run Main.py with `(venv) you@host:magtrack$ python Main.py`.
+1. In the virtual environment, run Main.py with `(venv) you@host:magtrack$ python Main.py path/to/tif/directory`.
 
 # Contents
 
