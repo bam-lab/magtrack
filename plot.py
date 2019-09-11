@@ -10,10 +10,6 @@ bead_data_193 = pd.read_csv("Results/193.csv")
 bead_data_c1 = pd.read_csv("Results/c1.csv")
 microns_per_px = 1 / 5.4533  # 2.6696 for 20x
 
-for i in range(2, 10):
-    bead_data[str(str(i) + 'frame_instantaneous_speed (µm/s)')] = bead_data[
-        str(str(i) + 'frame_instantaneous_speed (µm/s)')] * microns_per_px
-
 
 # All cells
 
